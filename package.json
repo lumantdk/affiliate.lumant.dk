@@ -27,7 +27,7 @@
     "framer-motion": "^6.3.16",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.7",
-    "next": "^15.1.9",
+    "next": "^15.1.11",
     "nextjs-progressbar": "^0.0.16",
     "nextjs-toploader": "^1.6.12",
     "notistack": "^3.0.1",

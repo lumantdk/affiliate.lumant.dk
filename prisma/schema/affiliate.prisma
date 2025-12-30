@@ -11,6 +11,7 @@ model SaasAffiliate {
   status         SaasAffiliateStatus         @default(PENDING)
   transactions   SaasAffiliateTransaction[]
   referralLinks  SaasAffiliateReferralLink[]
+  pageTemplates  SaaSAffiliatePageTemplate[]
 
   @@map("saas-affiliates")
 }
@@ -93,12 +94,29 @@ model SaasAffiliateTransaction {
   grossAmount Int
   netAmount   Int
   text        String
-  status      SaasAffiliateTransactionStatus @default(AVAILABLE)
+  status      SaasAffiliateTransactionStatus @default(PENDING)
 
   @@map("saas-affiliate-transactions")
 }
 
 enum SaasAffiliateTransactionStatus {
+  PENDING
   AVAILABLE
   PAID
+}
+
+model SaaSAffiliatePageTemplate {
+  // Required
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  affiliateId  String        @unique @db.ObjectId
+  affiliate    SaasAffiliate @relation(fields: [affiliateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  internalName String
+  description  String
+  imageUrl     String
+  // Optional
+  content      Json?
+
+  @@map("saas-affiliate-page-templates")
 }

@@ -7,9 +7,12 @@ model Media {
   fileName                   String
   size                       Int
   name                       String?
+  internalName               String?
   duration                   Int?
+  downloads                  DateTime[]
+  reference                  String?
   cdnMediaId                 String?
-  cdnMediaStatus             String?
+  cdnMediaStatus             MediaCDNStatus?
   lections                   CourseLection[]             @relation("CourseLectionMedia")
   courseLectionThumbnails    CourseLection[]             @relation("CourseLectionThumbnail")
   instructor                 Instructor                  @relation("InstructorMedia", fields: [instructorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -27,4 +30,10 @@ model Media {
   membershipClubImages       MembershipClub[]            @relation("MembershipClubImageMedia")
 
   @@map("media")
+}
+
+enum MediaCDNStatus {
+  READY
+  UPLOADING
+  QUEUED
 }

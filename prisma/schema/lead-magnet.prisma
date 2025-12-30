@@ -1,0 +1,18 @@
+model LeadMagnetGeneratedFunnel {
+  id               String                          @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt        DateTime                        @default(now())
+  updatedAt        DateTime                        @updatedAt
+  email            String
+  description      Json
+  generatedContent Json
+  reference        String
+  status           LeadMagnetGeneratedFunnelStatus
+  ipAddress        String?                         // IP address for consent tracking
+
+  @@map("lead-magnet-generated-funnel")
+}
+
+enum LeadMagnetGeneratedFunnelStatus {
+  DRAFT
+  GENERATED
+}

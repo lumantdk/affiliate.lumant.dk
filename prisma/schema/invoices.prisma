@@ -1,59 +1,89 @@
+// Invoice model for tracking payment invoices and billing information
 model Invoice {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  user            User          @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userId          String        @db.ObjectId
-  instructor      Instructor    @relation(fields: [instructorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  instructorId    String        @db.ObjectId
-  paymentCharge   PaymentCharge @relation(fields: [paymentChargeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  paymentChargeId String        @unique @db.ObjectId
-  reference       String
-  invoiceNumber   Int
-  netAmount       Float
-  grossAmount     Float
-  vatAmount       Float
-  vatRate         Float
-  status          InvoiceStatus
-  dueDate         DateTime
-  paidAt          DateTime?
-  companyInfo     CompanyInfo
-  userInfo        UserInfo
-  orderLines      OrderLine[]
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  // Relations
+  user         User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId       String     @db.ObjectId
+  instructor   Instructor @relation(fields: [instructorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  instructorId String     @db.ObjectId
+
+  // Invoice identification
+  invoiceNumber Int?
+  reference     String @unique
+
+  // Financial amounts
+  netAmount   Float // Amount excluding VAT
+  grossAmount Float // Amount including VAT
+  vatAmount   Float // VAT amount
+  vatRate     Float // VAT rate applied (e.g., 0.25 for 25%)
+
+  // Invoice status and dates
+  status  InvoiceStatus
+  dueDate DateTime
+  paidAt  DateTime? // When the invoice was paid
+
+  // Customer information
+  customerName  String
+  customerEmail String
+  customerPhone String
+
+  // Company information
+  companyName             String?
+  companyAddress          String?
+  companyCity             String?
+  companyZip              String?
+  companyCountry          String?
+  companyWebsiteUrl       String?
+  companyContactEmail     String?
+  companyContactPhone     String?
+  companyBusinessIdNumber String?
+
+  // Related order lines
+  orderLines InvoiceOrderLine[]
+
+  // External booking system integration (e.g., accounting software)
+  bookedInvoiceErrorMessage String? // Error message if booking failed
+  bookedInvoiceUrl          String? // URL to the booked invoice
+  bookedInvoiceNumber       Int? // External invoice number
+  bookedInvoiceStatus       InvoiceBookingStatus?
+  bookedAttempts            Int?                  @default(0)
+  bookedAt                  DateTime?
+
+  @@index([instructorId, bookedInvoiceStatus])
   @@map("invoices")
 }
 
-type OrderLine {
-  name        String
-  quantity    Int
-  price       Float
-  vatRate     Float
-  vatAmount   Float
-  netAmount   Float
-  grossAmount Float
+// Links payment charges to invoices for order line tracking
+model InvoiceOrderLine {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Links to the payment charge this order line represents
+  paymentCharge   PaymentCharge @relation(fields: [paymentChargeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  paymentChargeId String        @unique @db.ObjectId
+
+  // Links to the invoice this order line belongs to
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  invoiceId String?  @db.ObjectId
+
+  @@map("invoice-order-lines")
 }
 
+// Invoice payment status
 enum InvoiceStatus {
-  PENDING
-  PAID
-  REFUNDED
+  PENDING // Invoice created but not yet paid
+  PAID // Invoice has been paid
+  REFUNDED // Invoice has been refunded
 }
 
-type UserInfo {
-  name  String
-  email String
-  phone String
-}
-
-type CompanyInfo {
-  name                         String
-  address                      String
-  city                         String
-  zip                          String
-  country                      String
-  websiteUrl                   String
-  contactEmail                 String
-  contactPhone                 String
-  businessIdentificationNumber String
+// Status of invoice booking in external systems
+enum InvoiceBookingStatus {
+  PENDING // Waiting to be booked
+  BOOKED // Successfully booked in external system
+  SKIPPED // Booking was skipped
+  FAILED // Booking failed
 }

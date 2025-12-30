@@ -31,7 +31,6 @@ model Course {
   landingPage            LandingPage?
   paymentLinks           PaymentLink[]
   allowQuantity          Boolean?
-  userProductActivity    UserProductActivity[]
   prices                 ProductPrice[]
   isArchived             Boolean?                @default(false)
   checkoutCustomFields   CheckoutCustomField[]
@@ -41,6 +40,7 @@ model Course {
   maxPurchases           Int?
   exemptFromTax          Boolean?                @default(false)
   type                   ProductType             @default(DIGITAL_PRODUCT)
+  afterPurchaseSettings  AfterPurchaseSettings?
 
   @@map("courses")
 }

@@ -19,6 +19,7 @@ model Contact {
   firstName                 String?
   lastName                  String?
   paymentProviderCustomerId String?
+  accountingCustomerId      String?
 
   // Relations
   instructor              Instructor               @relation(fields: [instructorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -28,6 +29,7 @@ model Contact {
   contactLists            ContactListMember[]
   emails                  ContactEmails[]
   automationSubscriptions AutomationSubscription[]
+  quizResponses           QuizResponse[]
 
   @@map("contacts")
 }
@@ -146,6 +148,8 @@ enum ContactBatchImportStatus {
 
 enum ContactBatchImportType {
   CSV
+  MANUAL
+  FROM_EXISTING
 }
 
 model ContactBatchImportItem {

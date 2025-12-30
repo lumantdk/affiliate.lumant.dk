@@ -4,7 +4,6 @@ model Instructor {
   createdAt                  DateTime                       @default(now())
   updatedAt                  DateTime                       @updatedAt
   slug                       String                         @unique
-  name                       String
   // Optional
   headline                   String?
   facebookHandle             String?
@@ -65,12 +64,36 @@ model Instructor {
   notifications              NotificationsInstructor[]
   invoices                   Invoice[]
   integrationApps            IntegrationApp[]
+  invoiceSettings            InvoiceSettings
+  integrations               Integration[]
+  emailDrafts                EmailDraft[]
 
   @@map("instructors")
 }
 
+type InvoiceSettings {
+  invoiceNumber Int
+}
+
+enum SubscriptionType {
+  MONTHLY_SUBSCRIPTION
+  YEARLY_SUBSCRIPTION
+}
+
 type OnboardingAnswers {
-  previousPlatform String?
+  previousPlatform PreviousPlatform
+}
+
+enum PreviousPlatform {
+  SIMPLERO
+  THINKIFIC
+  EASYME
+  TEACHABLE
+  LEARNWORLDS
+  PODIA
+  OTHER
+  KAJABI
+  UNKNOWN
 }
 
 type TaxSettings {
@@ -89,7 +112,8 @@ enum TaxDisplayStrategy {
 }
 
 type ContentSettings {
-  allowDownloadAllMedia Boolean @default(false)
+  allowDownloadPrimaryContent Boolean @default(false)
+  allowDownloadAttachments    Boolean @default(false)
 }
 
 type EmailSettings {

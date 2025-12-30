@@ -1,3 +1,4 @@
+// This model should've been named Purchases
 model Payment {
   id             String               @id @default(auto()) @map("_id") @db.ObjectId
   createdAt      DateTime             @default(now())
@@ -17,6 +18,8 @@ model Payment {
   reference      String
   quantity       Int                  @default(1)
 
+  @@index([userId])
+  @@index([productPriceId])
   @@map("payments")
 }
 
@@ -27,34 +30,39 @@ type PaymentCustomField {
 }
 
 model PaymentCharge {
-  // Required
-  id                  String               @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  paidAt              DateTime?
-  payment             Payment              @relation(fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  paymentId           String               @db.ObjectId
-  dueDate             DateTime
-  grossAmountDue      Float
-  netAmountDue        Float
-  grossAmountPaid     Float
-  netAmountPaid       Float
-  grossAmountRefunded Float                @default(0)
-  netAmountRefunded   Float                @default(0)
-  status              PaymentChargeStatus
-  type                PaymentChargeType
-  reference           String
-  collectionAttempts  Int                  @default(0)
-  installmentTriedAt  DateTime?
-  // Optional
-  refundReason        String?
-  refundedAt          DateTime?
-  installmentNumber   Int?
-  paymentOrigin       PaymentChargeOrigin?
-  paymentIntentId     String?
-  invoices            Invoice?
+  id                           String                                     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt                    DateTime                                   @default(now())
+  updatedAt                    DateTime                                   @updatedAt
+  paidAt                       DateTime?
+  payment                      Payment                                    @relation(fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  paymentId                    String                                     @db.ObjectId
+  dueDate                      DateTime
+  grossAmountDue               Float
+  netAmountDue                 Float
+  grossAmountPaid              Float
+  netAmountPaid                Float
+  grossAmountRefunded          Float                                      @default(0)
+  netAmountRefunded            Float                                      @default(0)
+  status                       PaymentChargeStatus
+  type                         PaymentChargeType
+  reference                    String
+  collectionAttempts           Int                                        @default(0)
+  installmentTriedAt           DateTime?
+  installmentCollectionDetails PaymentChargeInstallmentCollectionDetails?
+  refundReason                 String?
+  refundedAt                   DateTime?
+  installmentNumber            Int?
+  paymentOrigin                PaymentChargeOrigin?
+  paymentIntentId              String?
+  invoiceOrderLineReference    InvoiceOrderLine?
 
   @@map("payment-charges")
+}
+
+type PaymentChargeInstallmentCollectionDetails {
+  attempts             Int       @default(0)
+  lastTriedAt          DateTime?
+  instructorNotifiedAt DateTime?
 }
 
 enum PaymentChargeOrigin {

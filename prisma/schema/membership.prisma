@@ -1,26 +1,27 @@
 model MembershipClub {
-  id                   String                      @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt            DateTime                    @default(now())
-  updatedAt            DateTime                    @updatedAt
-  instructor           Instructor                  @relation(fields: [instructorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  instructorId         String                      @db.ObjectId
-  imageMedia           Media?                      @relation("MembershipClubImageMedia", fields: [imageMediaId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  imageMediaId         String?                     @db.ObjectId
-  name                 String
-  tagLine              String?
-  status               MembershipClubStatus        @default(ACTIVE)
-  bannerMedia          Media?                      @relation("MembershipClubBannerMedia", fields: [bannerMediaId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  bannerMediaId        String?                     @db.ObjectId
-  enrollments          MembershipClubEnrollment[]
-  posts                MembershipClubPost[]
-  prices               ProductPrice[]
-  reference            String
-  contentPages         MembershipClubContentPage[]
-  menuItems            MembershipClubMenuItem[]
-  checkoutCustomFields CheckoutCustomField[]
-  checkoutSettings     CheckoutSettings?
-  receiptSettings      ReceiptSettings?
-  slug                 String
+  id                    String                      @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
+  instructor            Instructor                  @relation(fields: [instructorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  instructorId          String                      @db.ObjectId
+  imageMedia            Media?                      @relation("MembershipClubImageMedia", fields: [imageMediaId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  imageMediaId          String?                     @db.ObjectId
+  name                  String
+  tagLine               String?
+  status                MembershipClubStatus        @default(ACTIVE)
+  bannerMedia           Media?                      @relation("MembershipClubBannerMedia", fields: [bannerMediaId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  bannerMediaId         String?                     @db.ObjectId
+  enrollments           MembershipClubEnrollment[]
+  posts                 MembershipClubPost[]
+  prices                ProductPrice[]
+  reference             String
+  contentPages          MembershipClubContentPage[]
+  menuItems             MembershipClubMenuItem[]
+  checkoutCustomFields  CheckoutCustomField[]
+  checkoutSettings      CheckoutSettings?
+  receiptSettings       ReceiptSettings?
+  slug                  String
+  afterPurchaseSettings AfterPurchaseSettings?
 
   @@map("membership-clubs")
 }
@@ -73,6 +74,7 @@ enum MembershipClubContentPageLayout {
   DEFAULT
   GRID
   LIST
+  FEED
 }
 
 enum MembershipClubContentPageType {
@@ -116,6 +118,7 @@ model MembershipClubPost {
   createdAt        DateTime                      @default(now())
   updatedAt        DateTime                      @updatedAt
   title            String?
+  slug             String
   membershipClub   MembershipClub                @relation(fields: [membershipClubId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   membershipClubId String                        @db.ObjectId
   user             User                          @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -129,6 +132,7 @@ model MembershipClubPost {
   contentPageId    String?                       @db.ObjectId
   comments         MembershipClubPostComment[]
   thumbnailUrl     String?
+  canComment       Boolean                       @default(true)
 
   @@map("membership-club-posts")
 }

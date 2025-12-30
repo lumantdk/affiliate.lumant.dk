@@ -91,7 +91,6 @@ model SaasAffiliateTransaction {
   paidAt      DateTime?                      @updatedAt
   affiliateId String                         @unique @db.ObjectId
   affiliate   SaasAffiliate                  @relation(fields: [affiliateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  grossAmount Int
   netAmount   Int
   text        String
   status      SaasAffiliateTransactionStatus @default(PENDING)
